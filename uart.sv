@@ -117,13 +117,16 @@ module uart #(
 
         RX_START:
         if (rx_baud_cnt == 0) begin
-          rx_state <= RX_DATA;
           rx_baud_cnt <= COUNTER_WIDTH'(DIVIDER - 1);
+          rx_state <= RX_DATA;
+          rx_data_reg <= {rx, rx_data_reg[7:1]};
+          rx_bit_index <= rx_bit_index + 1;
         end else rx_baud_cnt <= rx_baud_cnt - 1;
 
         RX_DATA:
         if (rx_baud_cnt == 0) begin
           if (rx_bit_index == 7) begin
+            rx_data_reg <= {rx, rx_data_reg[7:1]};
             rx_state <= RX_STOP;
           end else begin
             rx_data_reg  <= {rx, rx_data_reg[7:1]};
