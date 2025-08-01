@@ -22,6 +22,9 @@ module uart #(
   localparam integer DIVIDER = CLK_FREQ / BAUD_RATE;
   localparam integer COUNTER_WIDTH = $clog2(DIVIDER);
 
+  // ------------------------
+  // UART TRANSMITTER (TX)
+  // ------------------------
   // TX Internal Signals
   typedef enum logic [1:0] {
     TX_IDLE,
@@ -34,21 +37,6 @@ module uart #(
   logic [2:0] tx_bit_index;
   logic [7:0] tx_data_reg;
 
-  // RX Internal Signals
-  typedef enum logic [1:0] {
-    RX_IDLE,
-    RX_START,
-    RX_DATA,
-    RX_STOP
-  } rx_state_t;
-  rx_state_t rx_state;
-  logic [COUNTER_WIDTH-1:0] rx_baud_cnt;
-  logic [2:0] rx_bit_index;
-  logic [7:0] rx_data_reg;
-
-  // ------------------------
-  // UART TRANSMITTER (TX)
-  // ------------------------
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       tx           <= 1'b1;
@@ -88,7 +76,7 @@ module uart #(
 
         TX_STOP:
         if (tx_baud_cnt == COUNTER_WIDTH'(DIVIDER - 1)) begin
-          tx       <= 1;
+          tx       <= 1'b1;
           tx_busy  <= 0;
           tx_state <= TX_IDLE;
         end else tx_baud_cnt <= tx_baud_cnt + 1;
@@ -99,6 +87,29 @@ module uart #(
   // ------------------------
   // UART RECEIVER (RX)
   // ------------------------
+  // RX Internal Signals
+  typedef enum logic [1:0] {
+    RX_IDLE,
+    RX_START,
+    RX_DATA,
+    RX_STOP
+  } rx_state_t;
+  rx_state_t rx_state;
+  logic [COUNTER_WIDTH-1:0] rx_baud_cnt;
+  logic [2:0] rx_bit_index;
+  logic [7:0] rx_data_reg;
+  logic rx_sync1, rx_sync2;
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      rx_sync1 <= 1'b1;
+      rx_sync2 <= 1'b1;
+    end else begin
+      rx_sync1 <= rx;
+      rx_sync2 <= rx_sync1;
+    end
+  end
+
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       rx_ready <= 0;
@@ -108,7 +119,7 @@ module uart #(
       case (rx_state)
         RX_IDLE: begin
           rx_ready <= 0;
-          if (!rx) begin
+          if (!rx_sync2) begin
             rx_baud_cnt <= COUNTER_WIDTH'(DIVIDER - 1) / 2;
             rx_bit_index <= 0;
             rx_state <= RX_START;
@@ -119,17 +130,17 @@ module uart #(
         if (rx_baud_cnt == 0) begin
           rx_baud_cnt <= COUNTER_WIDTH'(DIVIDER - 1);
           rx_state <= RX_DATA;
-          rx_data_reg <= {rx, rx_data_reg[7:1]};
+          rx_data_reg <= {rx_sync2, rx_data_reg[7:1]};
           rx_bit_index <= rx_bit_index + 1;
         end else rx_baud_cnt <= rx_baud_cnt - 1;
 
         RX_DATA:
         if (rx_baud_cnt == 0) begin
           if (rx_bit_index == 7) begin
-            rx_data_reg <= {rx, rx_data_reg[7:1]};
+            rx_data_reg <= {rx_sync2, rx_data_reg[7:1]};
             rx_state <= RX_STOP;
           end else begin
-            rx_data_reg  <= {rx, rx_data_reg[7:1]};
+            rx_data_reg  <= {rx_sync2, rx_data_reg[7:1]};
             rx_bit_index <= rx_bit_index + 1;
           end
           rx_baud_cnt <= COUNTER_WIDTH'(DIVIDER - 1);
