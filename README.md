@@ -147,11 +147,11 @@ Measurement performed using **Digilent Analog Discovery 2**. Successful transmis
 - **Relative error:**
 
   $$
-  \text{Error}_{slow} = \frac{105.43 - 104.167}{104.167} \times 100 \approx 1.13\%
+  e_{slow} = \frac{|105.43 - 104.167|}{104.167} \times 100 \approx 1.13\%
   $$
 
   $$
-  \text{Error}_{fast} = \frac{8.64 - 8.681}{8.681} \times 100 \approx 0.47\%
+  e_{fast} = \frac{|8.64 - 8.681|}{8.681} \times 100 \approx 0.47\%
   $$
 
 This deviation is expected due to integer clock divider rounding (50 MHz ÷ 9600 ≈ 5208.33)(50 MHz ÷ 115,200 ≈ 434.03).
