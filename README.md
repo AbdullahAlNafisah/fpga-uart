@@ -113,14 +113,19 @@ Below is an oscilloscope capture showing **TX (yellow)** and **RX (blue)** wavef
 Measurement performed using **Digilent Analog Discovery 2**. Successful transmission and reception of multiple bytes without errors confirms the correct operation on hardware. Below is oscilloscope captures for the **TX** and **RX** waveforms during transmission of a single byte (`0x55`). Measurement was performed using a [Digilent Analog Discovery 2](https://digilent.com/shop/analog-discovery-2-100ms-s-usb-oscilloscope-logic-analyzer-and-variable-power-supply/) device.
 
 <div align="center">
-  <img src="assets/uart_scope_slow.png" alt="UART TX/RX Oscilloscope Capture"/>
+  <img src="assets/uart_data_slow.png" alt="UART TX/RX Oscilloscope Capture"/>
 </div>
-<p align="center"><em>Figure 1: Slow UART TX/RX (9600) waveform during a single-byte transmission (`0x55`).</em></p>
+<p align="center"><em>Figure 1: Slow UART TX/RX (9600) data aqcuisition during a single-byte transmission (`0x55`).</em></p>
 
 <div align="center">
-  <img src="assets/uart_scope_fast.png" alt="UART TX/RX Oscilloscope Capture"/>
+  <img src="assets/uart_data_fast.png" alt="UART TX/RX Oscilloscope Capture"/>
 </div>
-<p align="center"><em>Figure 1: Fast UART TX/RX (115,200) waveform during a single-byte transmission (`0x55`).</em></p>
+<p align="center"><em>Figure 2: Fast UART TX/RX (115,200) data aqcuisition during a single-byte transmission (`0x55`).</em></p>
+
+<div align="center">
+  <img src="assets/uart_scope.png" alt="UART TX/RX Oscilloscope Capture"/>
+</div>
+<p align="center"><em>Figure 3: Fast UART TX/RX (115,200) waveform during a single-byte transmission (`0x55`).</em></p>
 
 ### Time Analysis
 
