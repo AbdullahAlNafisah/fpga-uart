@@ -95,22 +95,68 @@ This will:
 
 ## Hardware Validation
 
-This UART RTL design has been **tested and validated** using:
+This UART RTL design has been **tested and validated on real hardware** using:
 
-- **FPGA:** [Altera® MAX® 10 (10M08) Evaluation Kit](https://www.intel.com/content/www/us/en/products/details/fpga/development-kits/max/10m08-evaluation-kit.html)
+- **FPGA:** Altera® MAX® 10 (10M08) Evaluation Kit
 - **Clock Frequency:** 50 MHz
-- **Baud Rates Tested:** 9600, 115200
+- **Baud Rate Tested:** 9600 & 115,200 bps (8N1 format)
+- **Measurement Equipment:** Digilent **Analog Discovery 2** (Logic Analyzer & Oscilloscope)
 - **Setup:**
 
-  - UART TX/RX connected via USB-to-UART adapter to a PC terminal.
-  - Loopback and interactive data transfer tested.
+  - FPGA UART connected in **loopback configuration** with a **PC UART interface**.
+  - Data transmitted and received at 9600 baud.
+  - TX and RX waveforms observed using Analog Discovery 2.
 
-Successful transmission and reception of multiple bytes without errors confirms the correct operation on hardware. Below is an oscilloscope capture for the **TX (yellow)** and **RX (blue)** waveforms during transmission of a single byte (`0x55`). Measurement was performed using a **Digilent Analog Discovery 2** device.
+### Oscilloscope Capture
 
-<p align="center">
-  <img src="docs/uart_scope.png" alt="UART TX/RX Oscilloscope Capture" width="600"/>
-</p>
-*Figure 1: UART TX/RX waveform during a single-byte transmission (`0x55`).*
+Below is an oscilloscope capture showing **TX (yellow)** and **RX (blue)** waveforms during transmission of a single byte (`0x55`).
+Measurement performed using **Digilent Analog Discovery 2**.
+
+![UART TX/RX Oscilloscope Capture](docs/uart_scope.png)
+
+_Figure 1: UART TX/RX waveform during a single-byte loopback test (9600 baud)._
+
+Successful transmission and reception of multiple bytes without errors confirms the correct operation on hardware. Below is an oscilloscope capture for the **TX** and **RX** waveforms during transmission of a single byte (`0x55`). Measurement was performed using a [Digilent Analog Discovery 2](https://digilent.com/shop/analog-discovery-2-100ms-s-usb-oscilloscope-logic-analyzer-and-variable-power-supply/) device.
+
+<div align="center">
+  <img src="assets/uart_scope.png" alt="UART TX/RX Oscilloscope Capture" width="600"/>
+</div>
+<p align="center"><em>Figure 1: UART TX/RX waveform during a single-byte transmission (`0x55`).</em></p>
+
+### Time Analysis
+
+- Measured bit duration on oscilloscope:
+
+  $$
+  T_{bit,slow} \approx 105.43 \,\mu s
+  $$
+
+  $$
+  T_{bit,slow} \approx 105 \,\mu s
+  $$
+
+- Expected bit duration at **9600, 115200 baud:**
+
+  $$
+  T_{bit,slow} = \frac{1}{9600} \approx 104.167 \,\mu s
+  $$
+
+  $$
+  T_{bit,fast} = \frac{1}{115,200} \approx 8.681 \,\mu s
+  $$
+
+- **Relative error:**
+
+  $$
+  \text{Error}_{slow} = \frac{105.43 - 104.167}{104.167} \times 100 \approx 1.13\%
+  $$
+
+  $$
+  \text{Error}_{fast} = \frac{111111 - 8.681}{8.681} \times 100 \approx 11111\%
+  $$
+
+This deviation is expected due to integer clock divider rounding (50 MHz ÷ 9600 ≈ 5208.33)(50 MHz ÷ 115,200 ≈ 434.03).
+An error below **±2%** is well within standard UART tolerance limits (typically ±5%).
 
 ## License
 
