@@ -124,38 +124,57 @@ Measurement performed using **Digilent Analog Discovery 2**. Successful transmis
 
 ### Time Analysis
 
-- Measured bit duration on oscilloscope:
+**Measured Bit Duration (Oscilloscope):**
 
-  $$
-  T_{bit,slow} \approx 105.43 \,\mu s
-  $$
+$$
+T_{\text{bit,slow}} \approx 105.43~\mu s
+$$
 
-  $$
-  T_{bit,fast} \approx 8.64 \,\mu s
-  $$
+$$
+T_{\text{bit,fast}} \approx 8.64~\mu s
+$$
 
-- Expected bit duration at **9600, 115200 baud:**
+**Expected Bit Duration (Theoretical):**
 
-  $$
-  T_{bit,slow} = \frac{1}{9600} \approx 104.167 \,\mu s
-  $$
+For **9600 baud**:
 
-  $$
-  T_{bit,fast} = \frac{1}{115,200} \approx 8.681 \,\mu s
-  $$
+$$
+T_{\text{bit,slow}} = \frac{1}{9600} \approx 104.167~\mu s
+$$
 
-- **Relative error:**
+For **115200 baud**:
 
-  $$
-  e_{slow} = \frac{|105.43 - 104.167|}{104.167} \times 100 \approx 1.13\%
-  $$
+$$
+T_{\text{bit,fast}} = \frac{1}{115200} \approx 8.681~\mu s
+$$
 
-  $$
-  e_{fast} = \frac{|8.64 - 8.681|}{8.681} \times 100 \approx 0.47\%
-  $$
+**Relative Error:**
 
-This deviation is expected due to integer clock divider rounding (50 MHz ÷ 9600 ≈ 5208.33)(50 MHz ÷ 115,200 ≈ 434.03).
-An error below **±2%** is well within standard UART tolerance limits (typically ±5%).
+For **9600 baud**:
+
+$$
+e_{\text{slow}} = \frac{|105.43 - 104.167|}{104.167} \times 100 \approx 1.13\%
+$$
+
+For **115200 baud**:
+
+$$
+e_{\text{fast}} = \frac{|8.64 - 8.681|}{8.681} \times 100 \approx 0.47\%
+$$
+
+**Cause of Deviation:**
+
+This deviation is expected due to **integer clock divider rounding** when generating the baud rate:
+
+$$
+\frac{50~\text{MHz}}{9600} \approx 5208.33
+$$
+
+$$
+\frac{50~\text{MHz}}{115200} \approx 434.03
+$$
+
+Values must be rounded to the nearest integer which causes a small timing offset. This error (<2%) is well within standard UART tolerance limits.
 
 ## License
 
