@@ -60,10 +60,9 @@ module uart #(
 
         TX_CLEAR:
         if (tx_baud_cnt == COUNTER_WIDTH'(DIVIDER - 1)) begin
-          tx_baud_cnt  <= 0;
-          tx_state     <= TX_START;
-          tx           <= 1'b0;
-          tx_bit_index <= tx_bit_index + 1;
+          tx_baud_cnt <= 0;
+          tx_state    <= TX_START;
+          tx          <= 1'b0;
         end else tx_baud_cnt <= tx_baud_cnt + 1;
 
         TX_START:
@@ -90,6 +89,13 @@ module uart #(
           tx       <= 1'b1;
           tx_state <= TX_IDLE;
         end else tx_baud_cnt <= tx_baud_cnt + 1;
+
+        default: begin
+          tx           <= 1'b1;
+          tx_busy      <= 0;
+          tx_state     <= TX_IDLE;
+          tx_bit_index <= 0;
+        end
       endcase
     end
   end
