@@ -26,8 +26,9 @@ module uart #(
   // UART TRANSMITTER (TX)
   // ------------------------
   // TX Internal Signals
-  typedef enum logic [1:0] {
+  typedef enum logic [2:0] {
     TX_IDLE,
+    TX_CLEAR,
     TX_START,
     TX_DATA,
     TX_STOP
@@ -51,11 +52,19 @@ module uart #(
           tx_data_reg  <= tx_data;
           tx_bit_index <= 0;
           tx_baud_cnt  <= 0;
-          tx_state     <= TX_START;
-          tx           <= 0;
+          tx_state     <= TX_CLEAR;
+          tx           <= 1'b1;
         end else begin
           tx_busy <= 0;
         end
+
+        TX_CLEAR:
+        if (tx_baud_cnt == COUNTER_WIDTH'(DIVIDER - 1)) begin
+          tx_baud_cnt  <= 0;
+          tx_state     <= TX_START;
+          tx           <= 1'b0;
+          tx_bit_index <= tx_bit_index + 1;
+        end else tx_baud_cnt <= tx_baud_cnt + 1;
 
         TX_START:
         if (tx_baud_cnt == COUNTER_WIDTH'(DIVIDER - 1)) begin
