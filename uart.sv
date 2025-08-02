@@ -53,6 +53,8 @@ module uart #(
           tx_baud_cnt  <= 0;
           tx_state     <= TX_START;
           tx           <= 0;
+        end else begin
+          tx_busy <= 0;
         end
 
         TX_START:
@@ -77,7 +79,6 @@ module uart #(
         TX_STOP:
         if (tx_baud_cnt == COUNTER_WIDTH'(DIVIDER - 1)) begin
           tx       <= 1'b1;
-          tx_busy  <= 0;
           tx_state <= TX_IDLE;
         end else tx_baud_cnt <= tx_baud_cnt + 1;
       endcase
